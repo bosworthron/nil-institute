@@ -36,23 +36,33 @@ Scoring criteria:
 Return ONLY valid JSON with no markdown:
 {{"social_score": 0-100, "athletic_score": 0-100, "school_score": 0-100, "position_score": 0-100, "reasoning": "brief explanation"}}
 """
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=512,
-        messages=[{"role": "user", "content": prompt}]
-    )
-    text = response.content[0].text.strip()
-    # Strip markdown code fences if present
-    if text.startswith("```"):
-        lines = text.split("\n")
-        text = "\n".join(lines[1:-1] if lines[-1].strip() == "```" else lines[1:])
     try:
-        return json.loads(text)
-    except json.JSONDecodeError:
+        response = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=512,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        text = response.content[0].text.strip()
+        # Strip markdown code fences if present
+        if text.startswith("```"):
+            lines = text.split("\n")
+            text = "\n".join(lines[1:-1] if lines[-1].strip() == "```" else lines[1:])
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            return {
+                "social_score": 50.0,
+                "athletic_score": 50.0,
+                "school_score": 50.0,
+                "position_score": 50.0,
+                "reasoning": "Failed to parse Claude response — using neutral fallback",
+            }
+    except Exception as api_err:
+        print(f"    [claude_client] API error ({api_err.__class__.__name__}): {api_err} — using neutral fallback scores")
         return {
             "social_score": 50.0,
             "athletic_score": 50.0,
             "school_score": 50.0,
             "position_score": 50.0,
-            "reasoning": "Failed to parse Claude response — using neutral fallback",
+            "reasoning": f"API error — using neutral fallback scores",
         }
