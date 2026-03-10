@@ -13,6 +13,8 @@ def normalize_athlete_data(raw: dict) -> dict:
     # Generate stable ID: lowercase alphanumeric + hyphens only
     id_source = f"{name} {school} {sport}".lower()
     athlete_id = re.sub(r"[^a-z0-9]+", "-", id_source).strip("-")
+    if not athlete_id:
+        raise ValueError(f"Cannot generate ID for athlete with name={name!r}, school={school!r}, sport={sport!r}")
 
     return {
         "id": athlete_id,
@@ -28,5 +30,6 @@ def normalize_athlete_data(raw: dict) -> dict:
         "instagram_followers": raw.get("instagram_followers", 0),
         "twitter_followers": raw.get("twitter_followers", 0),
         "engagement_rate": raw.get("engagement_rate", 0.0),
+        "tiktok_followers": raw.get("tiktok_followers", 0),
         "recruiting_rank": raw.get("recruiting_rank"),
     }

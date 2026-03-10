@@ -67,3 +67,13 @@ def test_normalize_missing_optional_fields_are_none():
     assert result["recruiting_rank"] is None
     assert result["instagram_handle"] is None
     assert result["conference"] is None
+
+def test_normalize_raises_on_empty_id():
+    import pytest
+    with pytest.raises(ValueError):
+        normalize_athlete_data({"name": "---", "school": "---", "sport": "---"})
+
+def test_normalize_tiktok_followers_default():
+    raw = {"name": "Test", "school": "UCLA", "sport": "football"}
+    result = normalize_athlete_data(raw)
+    assert result["tiktok_followers"] == 0

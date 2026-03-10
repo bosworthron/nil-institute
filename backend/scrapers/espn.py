@@ -35,26 +35,27 @@ async def scrape_espn_roster(school_slug: str, sport: str = "football") -> List[
         async with httpx.AsyncClient(headers=HEADERS, follow_redirects=True, timeout=15) as client:
             resp = await client.get(url)
             resp.raise_for_status()
-    except (httpx.HTTPError, httpx.TimeoutException):
+
+        soup = BeautifulSoup(resp.text, "html.parser")
+        athletes = []
+
+        rows = soup.select("table.Table tr.Table__TR")
+        for row in rows:
+            cells = row.find_all("td")
+            if len(cells) < 3:
+                continue
+            name_cell = cells[1].get_text(strip=True) if len(cells) > 1 else ""
+            if not name_cell or name_cell.lower() in ("name", ""):
+                continue
+            athletes.append({
+                "name": name_cell,
+                "position": cells[2].get_text(strip=True) if len(cells) > 2 else "",
+                "year": cells[4].get_text(strip=True) if len(cells) > 4 else "",
+                "school": school_slug,
+                "sport": sport,
+            })
+
+        return athletes
+
+    except Exception:
         return []
-
-    soup = BeautifulSoup(resp.text, "html.parser")
-    athletes = []
-
-    rows = soup.select("table.Table tr.Table__TR")
-    for row in rows:
-        cells = row.find_all("td")
-        if len(cells) < 3:
-            continue
-        name_cell = cells[1].get_text(strip=True) if len(cells) > 1 else ""
-        if not name_cell or name_cell.lower() in ("name", ""):
-            continue
-        athletes.append({
-            "name": name_cell,
-            "position": cells[2].get_text(strip=True) if len(cells) > 2 else "",
-            "year": cells[4].get_text(strip=True) if len(cells) > 4 else "",
-            "school": school_slug,
-            "sport": sport,
-        })
-
-    return athletes
