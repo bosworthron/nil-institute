@@ -12,5 +12,7 @@ engine = create_async_engine(DATABASE_URL, echo=False) if DATABASE_URL else None
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False) if engine else None
 
 async def get_db():
+    if AsyncSessionLocal is None:
+        raise RuntimeError("Database not configured — set DATABASE_URL in .env")
     async with AsyncSessionLocal() as session:
         yield session

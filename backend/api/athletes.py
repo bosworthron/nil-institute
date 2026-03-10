@@ -39,10 +39,10 @@ async def get_athlete(athlete_id: str):
         "current_score": athlete.current_score,
         "score_change_pct": athlete.score_change_pct,
         "components": {
-            "social": athlete.instagram_followers,
-            "athletic": athlete.athletic_score,
-            "school": athlete.school_market_score,
-            "position": athlete.position_demand_score,
+            "social_followers": athlete.instagram_followers,  # raw follower count
+            "athletic": athlete.athletic_score,               # normalized 0-100
+            "school": athlete.school_market_score,            # normalized 0-100
+            "position": athlete.position_demand_score,        # normalized 0-100
         },
         "history": [
             {"date": str(h.week_date), "score": h.score}
