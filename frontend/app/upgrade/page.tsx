@@ -93,11 +93,15 @@ export default function UpgradePage() {
         {/* CTA */}
         <div className="text-center">
           <button
-            className="w-full py-3 rounded-full text-sm font-semibold mb-3 transition-colors"
+            disabled
+            className="w-full py-3 rounded-full text-sm font-semibold mb-3 transition-colors opacity-60 cursor-not-allowed"
             style={{ background: "var(--accent)", color: "var(--bg)" }}
           >
             Get Pro — $9.99/mo
           </button>
+          <p className="text-xs mb-3" style={{ color: "var(--text-muted)" }}>
+            Payment coming soon — join the waitlist below.
+          </p>
           <Link href="/" className="text-xs" style={{ color: "var(--text-muted)" }}>
             Continue with Free
           </Link>
