@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NILTrack — College Athlete NIL Valuations",
-  description: "Predicted NIL valuations for college athletes, updated weekly.",
+  title: "NIL Institute — College Athlete NIL Valuations",
+  description: "The definitive source for predicted NIL valuations for college athletes, updated weekly.",
 };
 
 export default function RootLayout({
