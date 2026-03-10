@@ -1,4 +1,4 @@
-import { getAthlete, formatNIL } from "@/lib/api";
+import { getAthlete, formatNIL, AthleteDetail } from "@/lib/api";
 import { ScoreTicker } from "@/components/ui/ScoreTicker";
 import { ScoreChart } from "@/components/athletes/ScoreChart";
 import { notFound } from "next/navigation";
@@ -84,66 +84,8 @@ export default async function AthletePage({ params }: PageProps) {
           <ScoreChart data={athlete.history} />
         </div>
 
-        {/* Score breakdown */}
-        <div
-          className="rounded-xl p-5 mb-4"
-          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-        >
-          <h2 className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "var(--text-secondary)" }}>
-            Score Breakdown
-          </h2>
-          <div className="space-y-3">
-            {[
-              {
-                label: "Social Reach",
-                weight: "35%",
-                value:
-                  athlete.components.social_followers != null
-                    ? athlete.components.social_followers.toLocaleString() + " followers"
-                    : "—",
-              },
-              {
-                label: "Athletic Performance",
-                weight: "30%",
-                value:
-                  athlete.components.athletic != null
-                    ? `${athlete.components.athletic.toFixed(0)}/100`
-                    : "—",
-              },
-              {
-                label: "School Market",
-                weight: "20%",
-                value:
-                  athlete.components.school != null
-                    ? `${athlete.components.school.toFixed(0)}/100`
-                    : "—",
-              },
-              {
-                label: "Position Demand",
-                weight: "15%",
-                value:
-                  athlete.components.position != null
-                    ? `${athlete.components.position.toFixed(0)}/100`
-                    : "—",
-              },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center justify-between text-sm">
-                <div>
-                  <span style={{ color: "var(--text-primary)" }}>{item.label}</span>
-                  <span className="ml-2 text-xs" style={{ color: "var(--text-muted)" }}>
-                    {item.weight}
-                  </span>
-                </div>
-                <span
-                  className="tabular-nums font-medium"
-                  style={{ color: "var(--text-secondary)" }}
-                >
-                  {item.value}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Score breakdown — Pro gated */}
+        <ScoreBreakdown athlete={athlete} />
 
         {/* Similar athletes placeholder */}
         <div
@@ -164,5 +106,107 @@ export default async function AthletePage({ params }: PageProps) {
 
       </div>
     </main>
+  );
+}
+
+async function ScoreBreakdown({ athlete }: { athlete: AthleteDetail }) {
+  const clerkPubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  const clerkEnabled = clerkPubKey && !clerkPubKey.startsWith("pk_replace");
+
+  let isPro = false;
+  if (clerkEnabled) {
+    try {
+      const { auth } = await import("@clerk/nextjs/server");
+      const { sessionClaims } = await auth();
+      isPro = (sessionClaims?.metadata as { plan?: string })?.plan === "pro";
+    } catch {
+      isPro = false;
+    }
+  }
+
+  const breakdownItems = [
+    {
+      label: "Social Reach",
+      weight: "35%",
+      value:
+        athlete.components.social_followers != null
+          ? `${athlete.components.social_followers.toLocaleString()} followers`
+          : "—",
+    },
+    {
+      label: "Athletic Performance",
+      weight: "30%",
+      value:
+        athlete.components.athletic != null
+          ? `${athlete.components.athletic.toFixed(0)}/100`
+          : "—",
+    },
+    {
+      label: "School Market",
+      weight: "20%",
+      value:
+        athlete.components.school != null
+          ? `${athlete.components.school.toFixed(0)}/100`
+          : "—",
+    },
+    {
+      label: "Position Demand",
+      weight: "15%",
+      value:
+        athlete.components.position != null
+          ? `${athlete.components.position.toFixed(0)}/100`
+          : "—",
+    },
+  ];
+
+  return (
+    <div
+      className="rounded-xl p-5 mb-4"
+      style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+    >
+      <h2
+        className="text-xs font-semibold uppercase tracking-widest mb-4"
+        style={{ color: "var(--text-secondary)" }}
+      >
+        Score Breakdown
+      </h2>
+
+      {isPro ? (
+        <div className="space-y-3">
+          {breakdownItems.map((item) => (
+            <div key={item.label} className="flex items-center justify-between text-sm">
+              <div>
+                <span style={{ color: "var(--text-primary)" }}>{item.label}</span>
+                <span className="ml-2 text-xs" style={{ color: "var(--text-muted)" }}>
+                  {item.weight}
+                </span>
+              </div>
+              <span
+                className="tabular-nums font-medium"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                {item.value}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-4">
+          <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>
+            See exactly how this score is calculated.
+          </p>
+          <p className="text-xs mb-4" style={{ color: "var(--text-muted)" }}>
+            Social reach, athletic performance, school market, and position demand — all unlocked on Pro.
+          </p>
+          <Link
+            href="/upgrade"
+            className="inline-block text-xs font-semibold px-4 py-2 rounded-full transition-colors"
+            style={{ background: "var(--accent)", color: "var(--bg)" }}
+          >
+            Upgrade to Pro — $9.99/mo
+          </Link>
+        </div>
+      )}
+    </div>
   );
 }
