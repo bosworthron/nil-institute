@@ -1,0 +1,21 @@
+# Python virtual environments
+**/venv/
+
+# Environment files (never commit secrets)
+**/.env
+**/.env.local
+
+# Node
+**/node_modules/
+
+# Python cache
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# Next.js build output
+**/.next/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
