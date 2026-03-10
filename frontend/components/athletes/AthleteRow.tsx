@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { ScoreTicker } from "@/components/ui/ScoreTicker";
 import type { AthleteRow } from "@/lib/api";
@@ -13,16 +11,8 @@ export function AthleteRow({ rank, athlete }: AthleteRowProps) {
   return (
     <Link href={`/athletes/${athlete.id}`} className="block">
       <div
-        className="flex items-center gap-4 px-5 py-3.5 transition-colors cursor-pointer"
-        style={{
-          borderBottom: "1px solid var(--border)",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLDivElement).style.background = "var(--surface)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLDivElement).style.background = "transparent";
-        }}
+        className="flex items-center gap-4 px-5 py-3.5 transition-colors cursor-pointer hover:bg-[var(--surface)]"
+        style={{ borderBottom: "1px solid var(--border)" }}
       >
         {/* Rank */}
         <span

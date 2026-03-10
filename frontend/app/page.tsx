@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getLeaderboard } from "@/lib/api";
 import { AthleteRow } from "@/components/athletes/AthleteRow";
 
@@ -52,9 +53,9 @@ export default async function Home() {
             <h2 className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--text-secondary)" }}>
               Top Football
             </h2>
-            <a href="/leaderboard?sport=football" className="text-xs hover:underline" style={{ color: "var(--green)" }}>
+            <Link href="/leaderboard?sport=football" className="text-xs hover:underline" style={{ color: "var(--green)" }}>
               View all →
-            </a>
+            </Link>
           </div>
           <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
             {football.athletes.length === 0 ? (
@@ -73,9 +74,9 @@ export default async function Home() {
             <h2 className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--text-secondary)" }}>
               Top Basketball
             </h2>
-            <a href="/leaderboard?sport=basketball" className="text-xs hover:underline" style={{ color: "var(--green)" }}>
+            <Link href="/leaderboard?sport=basketball" className="text-xs hover:underline" style={{ color: "var(--green)" }}>
               View all →
-            </a>
+            </Link>
           </div>
           <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
             {basketball.athletes.length === 0 ? (

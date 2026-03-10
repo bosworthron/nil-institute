@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { getLeaderboard, type AthleteRow } from "@/lib/api";
 import { AthleteRow as AthleteRowComponent } from "@/components/athletes/AthleteRow";
 
@@ -12,7 +13,8 @@ const SPORTS = [
 const CONFERENCES = ["All", "SEC", "Big Ten", "Big 12", "ACC", "Pac-12", "American"];
 
 export default function LeaderboardPage() {
-  const [sport, setSport] = useState("football");
+  const searchParams = useSearchParams();
+  const [sport, setSport] = useState(() => searchParams.get("sport") ?? "football");
   const [conference, setConference] = useState("All");
   const [athletes, setAthletes] = useState<AthleteRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,10 +51,11 @@ export default function LeaderboardPage() {
             <button
               key={s.value}
               onClick={() => setSport(s.value)}
+              aria-pressed={sport === s.value}
               className="px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
               style={{
                 background: sport === s.value ? "var(--accent)" : "var(--surface)",
-                color: sport === s.value ? "#000" : "var(--text-secondary)",
+                color: sport === s.value ? "var(--bg)" : "var(--text-secondary)",
                 border: "1px solid var(--border)",
               }}
             >
@@ -67,6 +70,7 @@ export default function LeaderboardPage() {
             <button
               key={c}
               onClick={() => setConference(c)}
+              aria-pressed={conference === c}
               className="px-3 py-1 rounded-full text-xs font-medium transition-colors"
               style={{
                 background: conference === c ? "var(--surface-2)" : "transparent",
