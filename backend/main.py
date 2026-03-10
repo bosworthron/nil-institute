@@ -5,7 +5,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = FastAPI(title="NIL Tracker API")
+app = FastAPI(title="NIL Institute API")
+
+from backend.api.athletes import router as athletes_router
+from backend.api.leaderboard import router as leaderboard_router
+
+app.include_router(athletes_router)
+app.include_router(leaderboard_router)
 
 origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 
