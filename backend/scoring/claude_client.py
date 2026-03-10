@@ -41,4 +41,18 @@ Return ONLY valid JSON with no markdown:
         max_tokens=512,
         messages=[{"role": "user", "content": prompt}]
     )
-    return json.loads(response.content[0].text)
+    text = response.content[0].text.strip()
+    # Strip markdown code fences if present
+    if text.startswith("```"):
+        lines = text.split("\n")
+        text = "\n".join(lines[1:-1] if lines[-1].strip() == "```" else lines[1:])
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return {
+            "social_score": 50.0,
+            "athletic_score": 50.0,
+            "school_score": 50.0,
+            "position_score": 50.0,
+            "reasoning": "Failed to parse Claude response — using neutral fallback",
+        }

@@ -52,3 +52,17 @@ def test_score_delta_no_previous():
 def test_score_delta_zero_old():
     delta = compute_score_delta(old_score=0, new_score=500000)
     assert delta == 0.0
+
+def test_composite_score_clamps_over_100():
+    """Scores above 100 should be clamped, not produce inflated results."""
+    score = calculate_nil_score(200.0, 200.0, 200.0, 200.0)
+    assert score == 100.0
+
+def test_composite_to_dollars_nan_safe():
+    import math
+    result = composite_to_dollars(float("nan"))
+    assert result == 0.0
+
+def test_weights_sum_to_one():
+    from backend.scoring.engine import WEIGHTS
+    assert sum(WEIGHTS.values()) == 1.0
