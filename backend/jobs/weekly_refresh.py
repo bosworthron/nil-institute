@@ -168,8 +168,9 @@ async def run():
     async with AsyncSessionLocal() as db:
         for raw in SEED_ATHLETES:
             try:
-                normalized = normalize_athlete_data(raw)
-                result = await refresh_athlete(db, normalized)
+                async with db.begin_nested():
+                    normalized = normalize_athlete_data(raw)
+                    result = await refresh_athlete(db, normalized)
                 results.append(result)
             except Exception as e:
                 print(f"  ERROR processing {raw.get('name', '?')}: {e}", file=sys.stderr)
