@@ -14,10 +14,10 @@ export interface AthleteRow {
 export interface AthleteDetail extends AthleteRow {
   year?: string;
   components: {
-    social_followers: number;
-    athletic: number;
-    school: number;
-    position: number;
+    social_followers: number | null;
+    athletic: number | null;
+    school: number | null;
+    position: number | null;
   };
   history: { date: string; score: number }[];
 }
