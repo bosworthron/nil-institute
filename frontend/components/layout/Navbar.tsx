@@ -32,7 +32,7 @@ export function Navbar() {
           </Link>
           <Link
             href="/upgrade"
-            className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[var(--accent)] text-black hover:bg-gray-200 transition-colors"
+            className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[var(--accent)] text-black hover:bg-[var(--text-secondary)] transition-colors"
           >
             Go Pro
           </Link>

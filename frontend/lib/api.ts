@@ -45,8 +45,8 @@ export async function searchAthletes(query: string): Promise<{ athletes: Athlete
 }
 
 export function formatNIL(score: number): string {
-  if (!score || score <= 0) return "$0";
+  if (!isFinite(score) || score <= 0) return "$0";
   if (score >= 1_000_000) return `$${(score / 1_000_000).toFixed(2)}M`;
-  if (score >= 1_000) return `$${(score / 1_000).toFixed(0)}K`;
+  if (score >= 1_000 && score < 1_000_000) return `$${Math.floor(score / 1_000)}K`;
   return `$${Math.round(score).toLocaleString()}`;
 }
