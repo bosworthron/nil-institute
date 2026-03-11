@@ -25,3 +25,9 @@ app.add_middleware(
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+@app.post("/admin/run-pipeline")
+async def run_pipeline():
+    from backend.jobs.weekly_refresh import run_weekly_refresh
+    await run_weekly_refresh()
+    return {"status": "done"}
