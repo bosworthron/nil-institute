@@ -28,6 +28,6 @@ def health():
 
 @app.post("/admin/run-pipeline")
 async def run_pipeline():
-    from backend.jobs.weekly_refresh import run_weekly_refresh
-    await run_weekly_refresh()
+    from backend.jobs.weekly_refresh import run
+    await run()
     return {"status": "done"}
