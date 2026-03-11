@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getLeaderboard } from "@/lib/api";
 import { AthleteRow } from "@/components/athletes/AthleteRow";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const [football, basketball] = await Promise.all([
     getLeaderboard("football", 25),

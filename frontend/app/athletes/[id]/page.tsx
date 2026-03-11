@@ -4,6 +4,8 @@ import { ScoreChart } from "@/components/athletes/ScoreChart";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ id: string }>;
 }
