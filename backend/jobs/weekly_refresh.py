@@ -15,9 +15,10 @@ from backend.db.models import Athlete, ScoreHistory
 from backend.scoring.engine import calculate_nil_score, composite_to_dollars, compute_score_delta
 from backend.scoring.claude_client import infer_athlete_scores
 from backend.scrapers.pipeline import normalize_athlete_data
+from backend.scrapers.espn import scrape_college_athletes
 
-# Seed athletes for Phase 1 — expands as scrapers mature
-SEED_ATHLETES = [
+# Legacy hardcoded list kept only as fallback if ESPN scrape fails entirely
+_FALLBACK_ATHLETES = [
     # ── FOOTBALL ──────────────────────────────────────────────
     {
         "name": "Arch Manning",
@@ -668,11 +669,24 @@ async def run():
         sys.exit(1)
 
     print(f"NIL Institute — Weekly Refresh ({date.today()})")
-    print(f"Processing {len(SEED_ATHLETES)} athletes...\n")
+
+    # Pull live rosters from ESPN
+    try:
+        athletes_raw = await scrape_college_athletes(
+            max_football=150,
+            max_mens_bb=100,
+            max_womens_bb=75,
+        )
+        print(f"ESPN scrape complete: {len(athletes_raw)} athletes", flush=True)
+    except Exception as e:
+        print(f"ESPN scrape failed ({e}), falling back to hardcoded list", file=sys.stderr)
+        athletes_raw = _FALLBACK_ATHLETES
+
+    print(f"Processing {len(athletes_raw)} athletes...\n")
 
     results = []
     async with AsyncSessionLocal() as db:
-        for raw in SEED_ATHLETES:
+        for raw in athletes_raw:
             try:
                 async with db.begin_nested():
                     normalized = normalize_athlete_data(raw)
@@ -683,9 +697,9 @@ async def run():
 
         await db.commit()
 
-    print(f"\nRefresh complete -- {len(results)}/{len(SEED_ATHLETES)} athletes updated.")
+    print(f"\nRefresh complete -- {len(results)}/{len(athletes_raw)} athletes updated.")
     print("\nTop NIL values this week:")
-    for r in sorted(results, key=lambda x: x["score"], reverse=True):
+    for r in sorted(results, key=lambda x: x["score"], reverse=True)[:10]:
         print(f"  {r['name']}: ${r['score']:,.0f} ({r['delta']:+.2f}%)")
 
 if __name__ == "__main__":
