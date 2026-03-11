@@ -27,7 +27,7 @@ def health():
     return {"status": "ok"}
 
 @app.post("/admin/run-pipeline")
-async def run_pipeline():
+async def run_pipeline(background_tasks: __import__("fastapi").BackgroundTasks):
     from backend.jobs.weekly_refresh import run
-    await run()
-    return {"status": "done"}
+    background_tasks.add_task(run)
+    return {"status": "started"}
