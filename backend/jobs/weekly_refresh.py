@@ -32,18 +32,6 @@ SEED_ATHLETES = [
         "recruiting_rank": 1,
     },
     {
-        "name": "Travis Hunter",
-        "school": "Colorado",
-        "sport": "football",
-        "position": "WR/CB",
-        "year": "Junior",
-        "conference": "Big 12",
-        "instagram_followers": 1200000,
-        "twitter_followers": 450000,
-        "engagement_rate": 4.2,
-        "recruiting_rank": 1,
-    },
-    {
         "name": "Dillon Gabriel",
         "school": "Oregon",
         "sport": "football",
