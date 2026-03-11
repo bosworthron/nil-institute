@@ -31,3 +31,14 @@ async def run_pipeline(background_tasks: __import__("fastapi").BackgroundTasks):
     from backend.jobs.weekly_refresh import run
     background_tasks.add_task(run)
     return {"status": "started"}
+
+@app.delete("/admin/athletes/{athlete_id}")
+async def delete_athlete(athlete_id: str):
+    from backend.db.connection import AsyncSessionLocal
+    from backend.db.models import Athlete, ScoreHistory
+    from sqlalchemy import select, delete
+    async with AsyncSessionLocal() as db:
+        async with db.begin():
+            await db.execute(delete(ScoreHistory).where(ScoreHistory.athlete_id == athlete_id))
+            await db.execute(delete(Athlete).where(Athlete.id == athlete_id))
+    return {"deleted": athlete_id}
